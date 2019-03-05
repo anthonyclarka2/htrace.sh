@@ -1,9 +1,24 @@
 #!/usr/bin/env bash
 
-readonly _dir="$(dirname "$(readlink -f "$0")")"
-
 # shellcheck disable=SC2034
 _arg="$1"
+
+if [[ "$OSTYPE" == "darwin"* ]] ; then
+
+  [ ! -z "$(brew --prefix)" ] && PATH=$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH
+
+  readonly _dir=$(dirname "$(readlink "$0" || echo "$(echo "$0" | sed -e 's,\\,/,g')")")
+
+elif [[ "$OSTYPE" == "linux-gnu" ]] ; then
+
+  readonly _dir=$(dirname "$(readlink -f "$0" || echo "$(echo "$0" | sed -e 's,\\,/,g')")")
+
+else
+
+  printf "Unsupported system version.\\n"
+  exit 1
+
+fi
 
 if [[ "$1" == "install" ]] ; then
 
